@@ -217,6 +217,8 @@ export default () => {
                 }}
                 onAdd={handleFileUpload}
                 onDelete={handleDeleteClick}
+                userProfile={userProfile}
+                onUserProfileSave={handleUserProfileSave}
               />
             </div>
           </div>
