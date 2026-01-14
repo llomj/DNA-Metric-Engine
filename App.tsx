@@ -94,12 +94,24 @@ export default () => {
   const handleSendMessage = async (content: string) => {
     if (!activeProfileId || !activeProfile || isThinking) return;
     setIsThinking(true);
+    
+    // Check user message for fallacies before sending
     const userMsg: Message = { role: 'user', content, timestamp: Date.now() };
-    const updated = [...currentHistory, userMsg];
+    const historyBeforeUser = currentHistory;
+    const updated = [...historyBeforeUser, userMsg];
+    
+    // Store user message (fallacies will be detected in the model's response)
     setHistories(prev => ({ ...prev, [activeProfileId]: updated }));
+    
     try {
       const res = await gemini.generateResponse(activeProfile, updated, settings);
-      const modelMsg: Message = { role: 'model', content: res.responseText, timestamp: Date.now(), detectedFallacies: res.fallacies };
+      // Model response includes fallacies detected in both user and model messages
+      const modelMsg: Message = { 
+        role: 'model', 
+        content: res.responseText, 
+        timestamp: Date.now(), 
+        detectedFallacies: res.fallacies 
+      };
       setHistories(prev => ({ ...prev, [activeProfileId]: [...updated, modelMsg] }));
     } catch (e: any) {
       console.error(e);

@@ -50,7 +50,17 @@ export class GeminiService {
   }
 
   async generateResponse(profile: ModelProfile, history: Message[], settings: CustomizationSettings): Promise<AIResponse> {
-    const systemInstruction = `IDENTITY: ${profile.name}. EPISTEMOLOGY: ${profile.metrics.epistemology}. VALUES: ${profile.metrics.valueHierarchy.join(' > ')}. AGGRESSIVENESS: ${settings.aggressiveness}. SKEPTICISM: ${settings.skepticism}. DETECT FALLACIES.`;
+    const systemInstruction = `IDENTITY: ${profile.name}. EPISTEMOLOGY: ${profile.metrics.epistemology}. VALUES: ${profile.metrics.valueHierarchy.join(' > ')}. AGGRESSIVENESS: ${settings.aggressiveness}. SKEPTICISM: ${settings.skepticism}.
+
+CRITICAL INSTRUCTIONS FOR FALLACY DETECTION:
+1. ACTIVELY DETECT logical fallacies, inconsistencies, and flawed reasoning in BOTH user messages AND your own responses.
+2. When you detect a fallacy in a user's argument, explicitly point it out in your responseText and include it in the fallacies array.
+3. When you detect a fallacy in your own reasoning, acknowledge it and correct yourself in the responseText.
+4. For each detected fallacy, provide: the exact fallacy name, a clear description of why it's a fallacy, and the specific example from the conversation context.
+5. Be thorough - check for: ad hominem, straw man, false dilemma, appeal to emotion, hasty generalization, post hoc, begging the question, red herring, slippery slope, and other logical fallacies.
+6. Point out inconsistencies in arguments, contradictions, and unsupported claims.
+7. Your responseText should naturally incorporate fallacy detection - don't just list them, explain why the reasoning is flawed.`;
+    
     const response = await this.ai.models.generateContent({
       model: 'gemini-3-pro-preview',
       contents: history.map(msg => ({ role: msg.role === 'model' ? 'model' : 'user', parts: [{ text: msg.content }] })),
@@ -65,7 +75,11 @@ export class GeminiService {
               type: Type.ARRAY,
               items: {
                 type: Type.OBJECT,
-                properties: { name: { type: Type.STRING }, description: { type: Type.STRING }, exampleFromContext: { type: Type.STRING } },
+                properties: { 
+                  name: { type: Type.STRING }, 
+                  description: { type: Type.STRING }, 
+                  exampleFromContext: { type: Type.STRING } 
+                },
                 required: ['name', 'description', 'exampleFromContext']
               }
             }
