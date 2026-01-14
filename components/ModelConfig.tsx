@@ -110,11 +110,11 @@ export default ({ profile, settings, onSettingsChange, onFileUpload }: any) => {
 
       {/* DNA Metrics */}
       {profile && profile.metrics && (
-        <div className="p-6 border border-emerald-500/30 bg-black/60 rounded-xl space-y-4">
-          <h3 className="text-emerald-500 font-orbitron text-[10px] uppercase mb-3">DNA_Metrics</h3>
+        <div className="p-6 border border-emerald-500/30 bg-black/60 rounded-xl space-y-5">
+          <h3 className="text-emerald-500 font-orbitron text-[10px] uppercase mb-4">DNA_Metrics</h3>
           
           {profile.metrics.behavioralTraits && profile.metrics.behavioralTraits.length > 0 && (
-            <div>
+            <div className="border-b border-emerald-900/20 pb-4">
               <div className="text-[8px] text-emerald-900 font-mono uppercase mb-2">Behavioral Traits</div>
               <div className="flex flex-wrap gap-2">
                 {profile.metrics.behavioralTraits.map((trait: string, i: number) => (
@@ -125,16 +125,72 @@ export default ({ profile, settings, onSettingsChange, onFileUpload }: any) => {
           )}
 
           {profile.metrics.epistemology && (
-            <div>
+            <div className="border-b border-emerald-900/20 pb-4">
               <div className="text-[8px] text-emerald-900 font-mono uppercase mb-2">Epistemology</div>
               <p className="text-[9px] text-emerald-700 font-mono leading-relaxed">{profile.metrics.epistemology}</p>
             </div>
           )}
 
+          {profile.metrics.moralAxioms && profile.metrics.moralAxioms.length > 0 && (
+            <div className="border-b border-emerald-900/20 pb-4">
+              <div className="text-[8px] text-emerald-900 font-mono uppercase mb-2">Moral Axioms</div>
+              <div className="space-y-1.5">
+                {profile.metrics.moralAxioms.map((axiom: string, i: number) => (
+                  <div key={i} className="text-[9px] text-emerald-700 font-mono leading-relaxed pl-2 border-l-2 border-emerald-900/30">
+                    • {axiom}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {profile.metrics.rhetoricalStructure && (
+            <div className="border-b border-emerald-900/20 pb-4">
+              <div className="text-[8px] text-emerald-900 font-mono uppercase mb-2">Rhetorical Structure</div>
+              <p className="text-[9px] text-emerald-700 font-mono leading-relaxed">{profile.metrics.rhetoricalStructure}</p>
+            </div>
+          )}
+
+          {profile.metrics.linguisticPatterns && profile.metrics.linguisticPatterns.length > 0 && (
+            <div className="border-b border-emerald-900/20 pb-4">
+              <div className="text-[8px] text-emerald-900 font-mono uppercase mb-2">Linguistic Patterns</div>
+              <div className="flex flex-wrap gap-2">
+                {profile.metrics.linguisticPatterns.map((pattern: string, i: number) => (
+                  <span key={i} className="text-[8px] text-emerald-700 border border-emerald-900/30 px-2 py-1 rounded font-mono italic">"{pattern}"</span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {profile.metrics.cognitiveBiases && profile.metrics.cognitiveBiases.length > 0 && (
+            <div className="border-b border-emerald-900/20 pb-4">
+              <div className="text-[8px] text-emerald-900 font-mono uppercase mb-2">Cognitive Biases</div>
+              <div className="flex flex-wrap gap-2">
+                {profile.metrics.cognitiveBiases.map((bias: string, i: number) => (
+                  <span key={i} className="text-[8px] text-emerald-800 border border-emerald-900/40 px-2 py-1 rounded font-mono bg-emerald-950/20">{bias}</span>
+                ))}
+              </div>
+            </div>
+          )}
+
           {profile.metrics.valueHierarchy && profile.metrics.valueHierarchy.length > 0 && (
-            <div>
+            <div className="border-b border-emerald-900/20 pb-4">
               <div className="text-[8px] text-emerald-900 font-mono uppercase mb-2">Value Hierarchy</div>
-              <div className="text-[9px] text-emerald-700 font-mono">{profile.metrics.valueHierarchy.join(' > ')}</div>
+              <div className="text-[9px] text-emerald-700 font-mono leading-relaxed">
+                {profile.metrics.valueHierarchy.map((value: string, i: number) => (
+                  <span key={i}>
+                    <span className="font-bold text-emerald-500">{value}</span>
+                    {i < profile.metrics.valueHierarchy.length - 1 && <span className="text-emerald-900 mx-2">→</span>}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {profile.metrics.emotionalConstraints && (
+            <div>
+              <div className="text-[8px] text-emerald-900 font-mono uppercase mb-2">Emotional Constraints</div>
+              <p className="text-[9px] text-emerald-700 font-mono leading-relaxed">{profile.metrics.emotionalConstraints}</p>
             </div>
           )}
         </div>
