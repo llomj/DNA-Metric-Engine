@@ -1,20 +1,68 @@
 import React, { useState } from 'react';
 import FileUpload from './FileUpload';
+import UserProfileEditor from './UserProfileEditor';
+import { UserProfile } from '../types';
 
-export default ({ profiles, activeId, onSelect, onAdd, onDelete }: any) => {
+export default ({ profiles, activeId, onSelect, onAdd, onDelete, userProfile, onUserProfileSave }: any) => {
   const [showUpload, setShowUpload] = useState(false);
+  const [showUserProfile, setShowUserProfile] = useState(false);
 
   return (
     <div className="h-full flex flex-col space-y-4">
       <div className="flex justify-between items-center border-b border-emerald-900/30 pb-4">
         <h3 className="text-emerald-500 font-orbitron text-lg uppercase tracking-wider">DNA Registry</h3>
-        <button
-          onClick={() => setShowUpload(!showUpload)}
-          className="text-[10px] text-emerald-600 border border-emerald-900/30 px-4 py-2 rounded uppercase font-mono hover:bg-emerald-900/10 font-bold"
-        >
-          {showUpload ? 'Cancel' : '+ Add DNA'}
-        </button>
+        <div className="flex space-x-2">
+          <button
+            onClick={() => setShowUserProfile(!showUserProfile)}
+            className="text-[10px] text-emerald-600 border border-emerald-900/30 px-4 py-2 rounded uppercase font-mono hover:bg-emerald-900/10 font-bold"
+          >
+            {showUserProfile ? 'Cancel' : '👤 User Profile'}
+          </button>
+          <button
+            onClick={() => setShowUpload(!showUpload)}
+            className="text-[10px] text-emerald-600 border border-emerald-900/30 px-4 py-2 rounded uppercase font-mono hover:bg-emerald-900/10 font-bold"
+          >
+            {showUpload ? 'Cancel' : '+ Add DNA'}
+          </button>
+        </div>
       </div>
+      
+      {/* User Profile Editor */}
+      {showUserProfile && (
+        <div className="border border-emerald-900/30 rounded-lg p-4 bg-black/40">
+          <UserProfileEditor
+            userProfile={userProfile}
+            onSave={(profile: UserProfile) => {
+              if (onUserProfileSave) {
+                onUserProfileSave(profile);
+              }
+              setShowUserProfile(false);
+            }}
+            onCancel={() => setShowUserProfile(false)}
+          />
+        </div>
+      )}
+
+      {/* Current User Profile Display */}
+      {userProfile && !showUserProfile && (
+        <div className="border border-emerald-500/30 rounded-lg p-3 bg-emerald-950/10">
+          <div className="flex items-center justify-between">
+            <div className="flex-1">
+              <div className="text-[10px] text-emerald-700 font-mono uppercase mb-1">Active User Profile</div>
+              <div className="text-sm font-orbitron font-bold text-emerald-400">{userProfile.name}</div>
+              {userProfile.summary && (
+                <div className="text-[9px] text-emerald-800 font-mono mt-1 line-clamp-1">{userProfile.summary}</div>
+              )}
+            </div>
+            <button
+              onClick={() => setShowUserProfile(true)}
+              className="text-[8px] text-emerald-600 border border-emerald-900/30 px-2 py-1 rounded uppercase font-mono hover:bg-emerald-900/10"
+            >
+              Edit
+            </button>
+          </div>
+        </div>
+      )}
       
       {showUpload && (
         <div className="border border-emerald-900/30 rounded-lg p-4">

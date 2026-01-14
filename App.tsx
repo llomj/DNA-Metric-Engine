@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ModelProfile, Message, CustomizationSettings, AppStatus } from './types';
+import { ModelProfile, Message, CustomizationSettings, AppStatus, UserProfile } from './types';
 import { gemini } from './services/geminiService';
 import Header from './components/Header';
 import ModelConfig from './components/ModelConfig';
@@ -53,9 +53,28 @@ export default () => {
   const [showPurgeWarning, setShowPurgeWarning] = useState(false);
   const [deleteWarningProfileId, setDeleteWarningProfileId] = useState<string | null>(null);
   const [showApiKeyDialog, setShowApiKeyDialog] = useState(false);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
 
   const activeProfile = profiles.find(p => p.id === activeProfileId) || null;
   const currentHistory = activeProfileId ? (histories[activeProfileId] || []) : [];
+
+  // Load user profile from localStorage
+  useEffect(() => {
+    const stored = localStorage.getItem('user_profile');
+    if (stored) {
+      try {
+        setUserProfile(JSON.parse(stored));
+      } catch (e) {
+        console.error('Error loading user profile:', e);
+      }
+    }
+  }, []);
+
+  // Save user profile to localStorage
+  const handleUserProfileSave = (profile: UserProfile) => {
+    setUserProfile(profile);
+    localStorage.setItem('user_profile', JSON.stringify(profile));
+  };
 
   const handleFileUpload = async (content: string, modelName: string) => {
     if (!modelName.trim()) {

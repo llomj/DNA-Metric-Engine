@@ -1,5 +1,5 @@
 import { GoogleGenAI, Type, Modality } from "@google/genai";
-import { ModelProfile, CustomizationSettings, Message, DetectedFallacy } from "../types";
+import { ModelProfile, CustomizationSettings, Message, DetectedFallacy, UserProfile } from "../types";
 
 export interface AIResponse { responseText: string; fallacies?: DetectedFallacy[]; }
 
@@ -49,8 +49,25 @@ export class GeminiService {
     return JSON.parse(response.text || '{}');
   }
 
-  async generateResponse(profile: ModelProfile, history: Message[], settings: CustomizationSettings): Promise<AIResponse> {
-    const systemInstruction = `IDENTITY: ${profile.name}. EPISTEMOLOGY: ${profile.metrics.epistemology}. VALUES: ${profile.metrics.valueHierarchy.join(' > ')}. AGGRESSIVENESS: ${settings.aggressiveness}. SKEPTICISM: ${settings.skepticism}.
+  async generateResponse(profile: ModelProfile, history: Message[], settings: CustomizationSettings, userProfile?: any): Promise<AIResponse> {
+    // Build user context if profile exists
+    let userContext = '';
+    if (userProfile) {
+      userContext = `\n\nUSER CONTEXT - You are conversing with: ${userProfile.name}. ${userProfile.persona ? `User persona: ${userProfile.persona}` : ''}. Use this information to understand who you're talking to, but respond naturally - don't overreact or be overly accommodating. Treat this as helpful context for building a natural conversation, similar to how humans remember details about people they talk to.`;
+    }
+
+    // Build conversation memory context
+    const conversationSummary = history.length > 2 
+      ? `\n\nCONVERSATION MEMORY - This is an ongoing conversation with ${history.length} messages. Build upon previous exchanges naturally, reference earlier points when relevant, and deepen the conversation like a human would. Use the full conversation history to maintain context and continuity.`
+      : '';
+
+    const systemInstruction = `IDENTITY: ${profile.name}. EPISTEMOLOGY: ${profile.metrics.epistemology}. VALUES: ${profile.metrics.valueHierarchy.join(' > ')}. AGGRESSIVENESS: ${settings.aggressiveness}. SKEPTICISM: ${settings.skepticism}.${userContext}${conversationSummary}
+
+CRITICAL INSTRUCTIONS FOR NATURAL CONVERSATION:
+1. Respond naturally and conversationally - like a real human would. Don't be robotic or overly formal.
+2. Build upon previous messages in the conversation. Reference earlier points, ask follow-up questions, and deepen the discussion organically.
+3. Use conversation history to maintain context and continuity - just like humans remember what was said earlier.
+4. If user profile information is provided, use it as helpful context but don't overreact or be overly accommodating. Treat it like knowing someone's background in a normal conversation.
 
 CRITICAL INSTRUCTIONS FOR FALLACY DETECTION:
 1. ACTIVELY DETECT logical fallacies, inconsistencies, and flawed reasoning in BOTH user messages AND your own responses.

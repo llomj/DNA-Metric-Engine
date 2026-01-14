@@ -9,6 +9,14 @@ export interface DNAMetrics {
   emotionalConstraints: string;
 }
 export interface ModelProfile { id: string; name: string; metrics: DNAMetrics; summary: string; }
+export interface UserProfile { 
+  id: string; 
+  name: string; 
+  persona: string; 
+  dnaMetrics?: DNAMetrics; 
+  summary?: string;
+  createdAt: number;
+}
 export interface DetectedFallacy { name: string; description: string; exampleFromContext: string; }
 export interface Message { role: 'user' | 'model'; content: string; timestamp: number; detectedFallacies?: DetectedFallacy[]; }
 export interface CustomizationSettings {
