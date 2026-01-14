@@ -12,6 +12,10 @@ dist/
 build/
 *.local
 
+# Keep public folder
+!public/
+!public/**/*
+
 # Editor directories and files
 .vscode/
 .idea/
