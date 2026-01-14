@@ -1,26 +1,213 @@
 <!DOCTYPE html>
 <html>
+<head>
+  <title>DNA Engine Icon Generator</title>
+  <style>
+    body {
+      background: #000;
+      color: #10b981;
+      font-family: monospace;
+      padding: 20px;
+    }
+    canvas {
+      border: 1px solid #10b981;
+      margin: 10px;
+    }
+  </style>
+</head>
 <body>
-<canvas id="canvas192" width="192" height="192"></canvas>
-<canvas id="canvas512" width="512" height="512"></canvas>
-<script>
-function createIcon(canvasId, size) {
-  const canvas = document.getElementById(canvasId);
-  const ctx = canvas.getContext('2d');
-  ctx.fillStyle = '#000000';
-  ctx.fillRect(0, 0, size, size);
-  ctx.fillStyle = '#10b981';
-  ctx.font = `bold ${size/4}px Arial`;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText('DNA', size/2, size/2);
-  const link = document.createElement('a');
-  link.download = `pwa-${size}x${size}.png`;
-  link.href = canvas.toDataURL();
-  link.click();
-}
-createIcon('canvas192', 192);
-setTimeout(() => createIcon('canvas512', 512), 100);
-</script>
+  <h1>DNA Engine Icon Generator</h1>
+  <p>Click the buttons to download the icons</p>
+  
+  <canvas id="canvas192" width="192" height="192"></canvas>
+  <canvas id="canvas512" width="512" height="512"></canvas>
+  
+  <br>
+  <button onclick="createIcon('canvas192', 192)">Download 192x192</button>
+  <button onclick="createIcon('canvas512', 512)">Download 512x512</button>
+  
+  <script>
+    function drawCyberpunkIcon(ctx, size) {
+      // Clear canvas with black
+      ctx.fillStyle = '#000000';
+      ctx.fillRect(0, 0, size, size);
+      
+      const centerX = size / 2;
+      const centerY = size / 2;
+      const scale = size / 512;
+      
+      // Draw grid pattern
+      ctx.strokeStyle = '#10b981';
+      ctx.lineWidth = 0.5 * scale;
+      ctx.globalAlpha = 0.1;
+      const gridSize = 32 * scale;
+      for (let x = 0; x < size; x += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, size);
+        ctx.stroke();
+      }
+      for (let y = 0; y < size; y += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(size, y);
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+      
+      // Draw DNA helix
+      ctx.save();
+      ctx.translate(centerX, centerY);
+      
+      const helixHeight = size * 0.4;
+      const helixWidth = size * 0.15;
+      const segments = 8;
+      
+      // Left strand
+      ctx.strokeStyle = '#10b981';
+      ctx.lineWidth = 3 * scale;
+      ctx.globalAlpha = 0.8;
+      ctx.beginPath();
+      for (let i = 0; i <= segments; i++) {
+        const y = -helixHeight / 2 + (i / segments) * helixHeight;
+        const x = -helixWidth / 2 + Math.sin(i * Math.PI / 2) * helixWidth * 0.3;
+        if (i === 0) {
+          ctx.moveTo(x, y);
+        } else {
+          ctx.lineTo(x, y);
+        }
+      }
+      ctx.stroke();
+      
+      // Right strand
+      ctx.beginPath();
+      for (let i = 0; i <= segments; i++) {
+        const y = -helixHeight / 2 + (i / segments) * helixHeight;
+        const x = helixWidth / 2 - Math.sin(i * Math.PI / 2) * helixWidth * 0.3;
+        if (i === 0) {
+          ctx.moveTo(x, y);
+        } else {
+          ctx.lineTo(x, y);
+        }
+      }
+      ctx.stroke();
+      
+      // Connecting bonds
+      ctx.strokeStyle = '#10b981';
+      ctx.lineWidth = 2 * scale;
+      ctx.globalAlpha = 0.6;
+      for (let i = 0; i <= segments; i++) {
+        const y = -helixHeight / 2 + (i / segments) * helixHeight;
+        const x1 = -helixWidth / 2 + Math.sin(i * Math.PI / 2) * helixWidth * 0.3;
+        const x2 = helixWidth / 2 - Math.sin(i * Math.PI / 2) * helixWidth * 0.3;
+        ctx.beginPath();
+        ctx.moveTo(x1, y);
+        ctx.lineTo(x2, y);
+        ctx.stroke();
+      }
+      
+      // Nodes
+      ctx.fillStyle = '#10b981';
+      ctx.globalAlpha = 1;
+      for (let i = 0; i <= segments; i++) {
+        const y = -helixHeight / 2 + (i / segments) * helixHeight;
+        const x1 = -helixWidth / 2 + Math.sin(i * Math.PI / 2) * helixWidth * 0.3;
+        const x2 = helixWidth / 2 - Math.sin(i * Math.PI / 2) * helixWidth * 0.3;
+        const nodeSize = 4 * scale;
+        
+        // Glow effect
+        ctx.shadowBlur = 8 * scale;
+        ctx.shadowColor = '#10b981';
+        
+        ctx.beginPath();
+        ctx.arc(x1, y, nodeSize, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.beginPath();
+        ctx.arc(x2, y, nodeSize, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.shadowBlur = 0;
+      
+      ctx.restore();
+      
+      // Tech border frame
+      ctx.strokeStyle = '#10b981';
+      ctx.lineWidth = 2 * scale;
+      ctx.globalAlpha = 0.4;
+      const borderPadding = size * 0.08;
+      ctx.strokeRect(borderPadding, borderPadding, size - borderPadding * 2, size - borderPadding * 2);
+      
+      ctx.lineWidth = 1 * scale;
+      ctx.globalAlpha = 0.2;
+      const innerPadding = size * 0.1;
+      ctx.strokeRect(innerPadding, innerPadding, size - innerPadding * 2, size - innerPadding * 2);
+      
+      // Corner accents
+      ctx.globalAlpha = 0.6;
+      ctx.lineWidth = 3 * scale;
+      const cornerSize = size * 0.08;
+      const cornerPadding = size * 0.08;
+      
+      // Top-left
+      ctx.beginPath();
+      ctx.moveTo(cornerPadding, cornerPadding);
+      ctx.lineTo(cornerPadding + cornerSize, cornerPadding);
+      ctx.moveTo(cornerPadding, cornerPadding);
+      ctx.lineTo(cornerPadding, cornerPadding + cornerSize);
+      ctx.stroke();
+      
+      // Top-right
+      ctx.beginPath();
+      ctx.moveTo(size - cornerPadding, cornerPadding);
+      ctx.lineTo(size - cornerPadding - cornerSize, cornerPadding);
+      ctx.moveTo(size - cornerPadding, cornerPadding);
+      ctx.lineTo(size - cornerPadding, cornerPadding + cornerSize);
+      ctx.stroke();
+      
+      // Bottom-left
+      ctx.beginPath();
+      ctx.moveTo(cornerPadding, size - cornerPadding);
+      ctx.lineTo(cornerPadding + cornerSize, size - cornerPadding);
+      ctx.moveTo(cornerPadding, size - cornerPadding);
+      ctx.lineTo(cornerPadding, size - cornerPadding - cornerSize);
+      ctx.stroke();
+      
+      // Bottom-right
+      ctx.beginPath();
+      ctx.moveTo(size - cornerPadding, size - cornerPadding);
+      ctx.lineTo(size - cornerPadding - cornerSize, size - cornerPadding);
+      ctx.moveTo(size - cornerPadding, size - cornerPadding);
+      ctx.lineTo(size - cornerPadding, size - cornerPadding - cornerSize);
+      ctx.stroke();
+      
+      // "DNA" text
+      ctx.globalAlpha = 0.8;
+      ctx.fillStyle = '#10b981';
+      ctx.font = `bold ${size * 0.09}px Arial`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('DNA', centerX, size * 0.82);
+    }
+    
+    function createIcon(canvasId, size) {
+      const canvas = document.getElementById(canvasId);
+      const ctx = canvas.getContext('2d');
+      drawCyberpunkIcon(ctx, size);
+      
+      const link = document.createElement('a');
+      link.download = `pwa-${size}x${size}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+    
+    // Draw previews on load
+    window.onload = function() {
+      const ctx192 = document.getElementById('canvas192').getContext('2d');
+      const ctx512 = document.getElementById('canvas512').getContext('2d');
+      drawCyberpunkIcon(ctx192, 192);
+      drawCyberpunkIcon(ctx512, 512);
+    };
+  </script>
 </body>
 </html>
