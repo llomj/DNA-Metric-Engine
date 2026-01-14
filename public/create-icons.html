@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<body>
+<canvas id="canvas192" width="192" height="192"></canvas>
+<canvas id="canvas512" width="512" height="512"></canvas>
+<script>
+function createIcon(canvasId, size) {
+  const canvas = document.getElementById(canvasId);
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#000000';
+  ctx.fillRect(0, 0, size, size);
+  ctx.fillStyle = '#10b981';
+  ctx.font = `bold ${size/4}px Arial`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('DNA', size/2, size/2);
+  const link = document.createElement('a');
+  link.download = `pwa-${size}x${size}.png`;
+  link.href = canvas.toDataURL();
+  link.click();
+}
+createIcon('canvas192', 192);
+setTimeout(() => createIcon('canvas512', 512), 100);
+</script>
+</body>
+</html>
