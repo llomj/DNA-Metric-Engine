@@ -72,7 +72,15 @@ export default defineConfig({
               }
             }
           }
-        ]
+        ],
+        // Enable offline support
+        skipWaiting: true,
+        clientsClaim: true
+      },
+      // Enable offline mode
+      devOptions: {
+        enabled: true,
+        type: 'module'
       }
     })
   ],

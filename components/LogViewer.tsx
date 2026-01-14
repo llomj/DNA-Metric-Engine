@@ -1,7 +1,34 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { ModelProfile, Message } from '../types';
 
 export default ({ profiles, histories, onClose }: { profiles: ModelProfile[]; histories: Record<string, Message[]>; onClose: () => void }) => {
+  const [offlineHistories, setOfflineHistories] = useState<Record<string, Message[]>>({});
+  const [isOffline, setIsOffline] = useState(!navigator.onLine);
+
+  useEffect(() => {
+    // Check online status
+    const handleOnline = () => setIsOffline(false);
+    const handleOffline = () => setIsOffline(true);
+    
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    
+    // Load from localStorage as backup
+    const storedHistories = localStorage.getItem('conversation_histories');
+    if (storedHistories) {
+      try {
+        setOfflineHistories(JSON.parse(storedHistories));
+      } catch (e) {
+        console.error('Error loading offline histories:', e);
+      }
+    }
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
   const formatTimestamp = (timestamp: number) => {
     const date = new Date(timestamp);
     return date.toLocaleString('en-US', { 
@@ -12,23 +39,45 @@ export default ({ profiles, histories, onClose }: { profiles: ModelProfile[]; hi
     });
   };
 
+  // Use offline histories if online histories are empty or we're offline
+  const effectiveHistories = isOffline || Object.keys(histories).length === 0 ? offlineHistories : histories;
+  
+  // Load profiles from localStorage if needed
+  const storedProfiles = localStorage.getItem('model_profiles');
+  const effectiveProfiles = storedProfiles ? (() => {
+    try {
+      return JSON.parse(storedProfiles);
+    } catch {
+      return profiles;
+    }
+  })() : profiles;
+
   // Group conversations by profile
-  const profileLogs = profiles.map(profile => ({
+  const profileLogs = effectiveProfiles.map((profile: ModelProfile) => ({
     profile,
-    messages: histories[profile.id] || []
-  })).filter(log => log.messages.length > 0);
+    messages: effectiveHistories[profile.id] || []
+  })).filter((log: any) => log.messages.length > 0);
 
   return (
     <div className="absolute inset-0 z-[120] bg-black/95 backdrop-blur-2xl flex flex-col p-6 animate-in fade-in duration-300">
       <div className="flex items-center justify-between border-b border-emerald-900/30 pb-4 mb-6">
-        <h2 className="text-xl font-orbitron text-emerald-500 tracking-widest uppercase">Model Matrix Memory</h2>
+        <div className="flex items-center space-x-3">
+          <h2 className="text-xl font-orbitron text-emerald-500 tracking-widest uppercase">Model Matrix Memory</h2>
+          {isOffline && (
+            <span className="text-[8px] text-emerald-900 font-mono uppercase border border-emerald-900/30 px-2 py-1 rounded">
+              OFFLINE
+            </span>
+          )}
+        </div>
         <button onClick={onClose} className="p-3 border border-emerald-500 text-emerald-500 text-[10px] uppercase hover:bg-emerald-500/10 transition-all">Close_DB</button>
       </div>
       <div className="flex-1 overflow-y-auto custom-scrollbar space-y-6">
         {profileLogs.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-emerald-700 font-mono text-sm">No conversation logs found.</p>
-            <p className="text-emerald-900 font-mono text-xs mt-2">Start chatting with models to create logs.</p>
+            <p className="text-emerald-900 font-mono text-xs mt-2">
+              {isOffline ? 'Logs are available offline from localStorage.' : 'Start chatting with models to create logs.'}
+            </p>
           </div>
         ) : (
           profileLogs.map(({ profile, messages }) => (

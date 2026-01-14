@@ -58,17 +58,84 @@ export default () => {
   const activeProfile = profiles.find(p => p.id === activeProfileId) || null;
   const currentHistory = activeProfileId ? (histories[activeProfileId] || []) : [];
 
-  // Load user profile from localStorage
+  // Load all data from localStorage on mount
   useEffect(() => {
-    const stored = localStorage.getItem('user_profile');
-    if (stored) {
+    // Load user profile
+    const storedProfile = localStorage.getItem('user_profile');
+    if (storedProfile) {
       try {
-        setUserProfile(JSON.parse(stored));
+        setUserProfile(JSON.parse(storedProfile));
       } catch (e) {
         console.error('Error loading user profile:', e);
       }
     }
+
+    // Load profiles
+    const storedProfiles = localStorage.getItem('model_profiles');
+    if (storedProfiles) {
+      try {
+        const parsed = JSON.parse(storedProfiles);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setProfiles(parsed);
+          // Set active profile if it exists
+          const storedActiveId = localStorage.getItem('active_profile_id');
+          if (storedActiveId && parsed.find((p: ModelProfile) => p.id === storedActiveId)) {
+            setActiveProfileId(storedActiveId);
+          } else {
+            setActiveProfileId(parsed[0].id);
+          }
+        }
+      } catch (e) {
+        console.error('Error loading profiles:', e);
+      }
+    }
+
+    // Load conversation histories
+    const storedHistories = localStorage.getItem('conversation_histories');
+    if (storedHistories) {
+      try {
+        setHistories(JSON.parse(storedHistories));
+      } catch (e) {
+        console.error('Error loading histories:', e);
+      }
+    }
+
+    // Load settings
+    const storedSettings = localStorage.getItem('model_settings');
+    if (storedSettings) {
+      try {
+        setSettings(JSON.parse(storedSettings));
+      } catch (e) {
+        console.error('Error loading settings:', e);
+      }
+    }
   }, []);
+
+  // Save profiles to localStorage whenever they change
+  useEffect(() => {
+    if (profiles.length > 0) {
+      localStorage.setItem('model_profiles', JSON.stringify(profiles));
+    }
+  }, [profiles]);
+
+  // Save active profile ID to localStorage
+  useEffect(() => {
+    if (activeProfileId) {
+      localStorage.setItem('active_profile_id', activeProfileId);
+    }
+  }, [activeProfileId]);
+
+  // Save conversation histories to localStorage whenever they change
+  useEffect(() => {
+    if (Object.keys(histories).length > 0) {
+      localStorage.setItem('conversation_histories', JSON.stringify(histories));
+    }
+  }, [histories]);
+
+  // Save settings to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('model_settings', JSON.stringify(settings));
+  }, [settings]);
 
   // Save user profile to localStorage
   const handleUserProfileSave = (profile: UserProfile) => {
@@ -158,6 +225,12 @@ export default () => {
     setViewMode('chat');
     setIsMenuOpen(false);
     setShowPurgeWarning(false);
+    // Clear localStorage
+    localStorage.removeItem('model_profiles');
+    localStorage.removeItem('conversation_histories');
+    localStorage.removeItem('model_settings');
+    localStorage.removeItem('active_profile_id');
+    // Keep user profile - don't delete it on purge
   };
 
   const cancelPurge = () => {
