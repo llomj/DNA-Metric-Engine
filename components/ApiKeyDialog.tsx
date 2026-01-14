@@ -65,6 +65,11 @@ export default ({ onClose, onSave }: any) => {
                 Google AI Studio
               </a>
             </p>
+            <div className="p-3 bg-emerald-950/20 border border-emerald-900/30 rounded-lg">
+              <p className="text-emerald-600 font-mono text-[10px] leading-relaxed">
+                🔒 <span className="font-bold">SECURE:</span> Your API key is stored ONLY in your browser's localStorage. It is NEVER uploaded to GitHub or shared with anyone. Each user sets their own key locally.
+              </p>
+            </div>
           </div>
           <div className="flex space-x-4 pt-4 border-t border-emerald-900/50">
             <button
