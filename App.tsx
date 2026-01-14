@@ -391,9 +391,9 @@ export default () => {
           <ApiKeyDialog
             onClose={() => setShowApiKeyDialog(false)}
             onSave={(key: string) => {
-              // API key is saved to localStorage in the component
+              // API key is saved ONLY to localStorage (client-side) - never to GitHub
+              // Reload to reinitialize service with new API key
               setShowApiKeyDialog(false);
-              // Reload the page to update the service with new API key
               window.location.reload();
             }}
           />

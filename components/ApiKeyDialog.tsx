@@ -13,6 +13,7 @@ export default ({ onClose, onSave }: any) => {
 
   const handleSave = () => {
     if (apiKey.trim()) {
+      // Store API key ONLY in localStorage - never sent to server or GitHub
       localStorage.setItem('gemini_api_key', apiKey.trim());
       if (onSave) {
         onSave(apiKey.trim());
@@ -20,6 +21,8 @@ export default ({ onClose, onSave }: any) => {
       if (onClose) {
         onClose();
       }
+      // Show confirmation
+      alert('API key saved securely to your device. It will not be shared or uploaded to GitHub.');
     } else {
       alert('Please enter an API key');
     }

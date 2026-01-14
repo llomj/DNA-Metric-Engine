@@ -6,12 +6,22 @@ export interface AIResponse { responseText: string; fallacies?: DetectedFallacy[
 export class GeminiService {
   private ai: GoogleGenAI;
   constructor() {
-    // Check localStorage first, then fall back to env variable or hardcoded key
+    // API key is stored client-side only in localStorage - never in code or GitHub
+    // Priority: localStorage (user-set) > environment variable (for development only)
     const storedKey = typeof window !== 'undefined' ? localStorage.getItem('gemini_api_key') : null;
-    const apiKey = storedKey || import.meta.env.VITE_API_KEY || 'AIzaSyDIKXOKKzg6pV0geAxR6SGzVctsm-ay2-k';
+    const apiKey = storedKey || import.meta.env.VITE_API_KEY;
+    
     if (!apiKey) {
-      console.warn('API key is not set. Please configure it using the key icon in the header.');
+      console.warn('API key is not set. Please configure it using the 🔑 key icon in the header.');
+      // Create a dummy instance - will fail gracefully when used
+      this.ai = new GoogleGenAI({ apiKey: 'placeholder' });
+    } else {
+      this.ai = new GoogleGenAI({ apiKey });
     }
+  }
+  
+  // Method to update API key after user sets it
+  updateApiKey(apiKey: string) {
     this.ai = new GoogleGenAI({ apiKey });
   }
 
