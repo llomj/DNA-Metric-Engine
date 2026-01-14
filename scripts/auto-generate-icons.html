@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Auto Generate Icons</title>
+</head>
+<body>
+  <script>
+    // This will auto-generate and download icons when opened
+    function drawCyberpunkIcon(ctx, size) {
+      ctx.fillStyle = '#000000';
+      ctx.fillRect(0, 0, size, size);
+      
+      const centerX = size / 2;
+      const centerY = size / 2;
+      const scale = size / 512;
+      
+      // Grid
+      ctx.strokeStyle = '#10b981';
+      ctx.lineWidth = 0.5 * scale;
+      ctx.globalAlpha = 0.1;
+      const gridSize = 32 * scale;
+      for (let x = 0; x < size; x += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, size);
+        ctx.stroke();
+      }
+      for (let y = 0; y < size; y += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(size, y);
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+      
+      // DNA helix
+      ctx.save();
+      ctx.translate(centerX, centerY);
+      
+      const helixHeight = size * 0.4;
+      const helixWidth = size * 0.15;
+      const segments = 8;
+      
+      // Left strand
+      ctx.strokeStyle = '#10b981';
+      ctx.lineWidth = 3 * scale;
+      ctx.globalAlpha = 0.8;
+      ctx.beginPath();
+      for (let i = 0; i <= segments; i++) {
+        const y = -helixHeight / 2 + (i / segments) * helixHeight;
+        const x = -helixWidth / 2 + Math.sin(i * Math.PI / 2) * helixWidth * 0.3;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      
+      // Right strand
+      ctx.beginPath();
+      for (let i = 0; i <= segments; i++) {
+        const y = -helixHeight / 2 + (i / segments) * helixHeight;
+        const x = helixWidth / 2 - Math.sin(i * Math.PI / 2) * helixWidth * 0.3;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      
+      // Bonds
+      ctx.strokeStyle = '#10b981';
+      ctx.lineWidth = 2 * scale;
+      ctx.globalAlpha = 0.6;
+      for (let i = 0; i <= segments; i++) {
+        const y = -helixHeight / 2 + (i / segments) * helixHeight;
+        const x1 = -helixWidth / 2 + Math.sin(i * Math.PI / 2) * helixWidth * 0.3;
+        const x2 = helixWidth / 2 - Math.sin(i * Math.PI / 2) * helixWidth * 0.3;
+        ctx.beginPath();
+        ctx.moveTo(x1, y);
+        ctx.lineTo(x2, y);
+        ctx.stroke();
+      }
+      
+      // Nodes
+      ctx.fillStyle = '#10b981';
+      ctx.globalAlpha = 1;
+      for (let i = 0; i <= segments; i++) {
+        const y = -helixHeight / 2 + (i / segments) * helixHeight;
+        const x1 = -helixWidth / 2 + Math.sin(i * Math.PI / 2) * helixWidth * 0.3;
+        const x2 = helixWidth / 2 - Math.sin(i * Math.PI / 2) * helixWidth * 0.3;
+        const nodeSize = 4 * scale;
+        ctx.shadowBlur = 8 * scale;
+        ctx.shadowColor = '#10b981';
+        ctx.beginPath();
+        ctx.arc(x1, y, nodeSize, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(x2, y, nodeSize, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.shadowBlur = 0;
+      ctx.restore();
+      
+      // Border
+      ctx.strokeStyle = '#10b981';
+      ctx.lineWidth = 2 * scale;
+      ctx.globalAlpha = 0.4;
+      const borderPadding = size * 0.08;
+      ctx.strokeRect(borderPadding, borderPadding, size - borderPadding * 2, size - borderPadding * 2);
+      
+      // Corners
+      ctx.globalAlpha = 0.6;
+      ctx.lineWidth = 3 * scale;
+      const cornerSize = size * 0.08;
+      const cornerPadding = size * 0.08;
+      ctx.beginPath();
+      ctx.moveTo(cornerPadding, cornerPadding);
+      ctx.lineTo(cornerPadding + cornerSize, cornerPadding);
+      ctx.moveTo(cornerPadding, cornerPadding);
+      ctx.lineTo(cornerPadding, cornerPadding + cornerSize);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(size - cornerPadding, cornerPadding);
+      ctx.lineTo(size - cornerPadding - cornerSize, cornerPadding);
+      ctx.moveTo(size - cornerPadding, cornerPadding);
+      ctx.lineTo(size - cornerPadding, cornerPadding + cornerSize);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cornerPadding, size - cornerPadding);
+      ctx.lineTo(cornerPadding + cornerSize, size - cornerPadding);
+      ctx.moveTo(cornerPadding, size - cornerPadding);
+      ctx.lineTo(cornerPadding, size - cornerPadding - cornerSize);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(size - cornerPadding, size - cornerPadding);
+      ctx.lineTo(size - cornerPadding - cornerSize, size - cornerPadding);
+      ctx.moveTo(size - cornerPadding, size - cornerPadding);
+      ctx.lineTo(size - cornerPadding, size - cornerPadding - cornerSize);
+      ctx.stroke();
+      
+      // DNA text
+      ctx.globalAlpha = 0.8;
+      ctx.fillStyle = '#10b981';
+      ctx.font = `bold ${size * 0.09}px Arial`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('DNA', centerX, size * 0.82);
+    }
+    
+    function generateAndDownload(size) {
+      const canvas = document.createElement('canvas');
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      drawCyberpunkIcon(ctx, size);
+      
+      canvas.toBlob(function(blob) {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `pwa-${size}x${size}.png`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }, 'image/png');
+    }
+    
+    // Auto-generate on load
+    window.onload = function() {
+      setTimeout(() => generateAndDownload(192), 500);
+      setTimeout(() => generateAndDownload(512), 1500);
+      setTimeout(() => {
+        document.body.innerHTML = '<h1 style="color: #10b981; font-family: monospace; padding: 20px;">Icons generated! Check your downloads folder, then save them to public/ folder as pwa-192x192.png and pwa-512x512.png</h1>';
+      }, 2500);
+    };
+  </script>
+</body>
+</html>
