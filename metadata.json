@@ -1,0 +1,5 @@
+{
+  "name": "DNA Metric Engine",
+  "description": "A modular cyberpunk-themed application for logic and character DNA analysis.",
+  "requestFramePermissions": ["microphone"]
+}

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>DNA Metric Engine | Cyberpunk Intelligence</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --safe-top: env(safe-area-inset-top); --safe-bottom: env(safe-area-inset-bottom); }
+    body { background-color: #000; color: #00ff41; font-family: 'Roboto Mono', monospace; margin: 0; padding: 0; overflow: hidden; height: 100vh; height: 100svh; }
+    h1, h2, h3, .font-orbitron { font-family: 'Orbitron', sans-serif; }
+    .glitch-bg { background: repeating-linear-gradient(0deg, rgba(0, 255, 65, 0.03) 0px, rgba(0, 255, 65, 0.03) 1px, transparent 1px, transparent 2px); }
+    .scanline { width: 100%; height: 2px; background: rgba(0, 255, 65, 0.05); position: absolute; top: 0; left: 0; pointer-events: none; z-index: 9999; animation: scanline 8s linear infinite; }
+    @keyframes scanline { 0% { top: 0; } 100% { top: 100%; } }
+    input, button { touch-action: manipulation; }
+    .safe-top-padding { padding-top: var(--safe-top); }
+    .safe-bottom-padding { padding-bottom: var(--safe-bottom); }
+    .custom-scrollbar::-webkit-scrollbar { width: 2px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0); }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(16, 185, 129, 0.2); }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(16, 185, 129, 0.4); }
+  </style>
+<script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.35.0"
+  }
+}
+</script>
+</head>
+<body class="glitch-bg">
+  <div id="root" class="h-full w-full overflow-hidden"></div>
+  <div class="scanline"></div>
+  <script type="module" src="index.tsx"></script>
+</body>
+</html>
