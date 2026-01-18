@@ -1,4 +1,4 @@
-#This app is a build in philosopher AI called Tjump (philosopher youtuber). User can customise DNA metrics into the model, create logical rules, epistimology etc. The App shows logical inconsistencies, logical fallacies. API key required. paste API key in "key icon" in app. 
+#This app is a build in philosopher AI called Tjump (philosopher youtuber). User can customise DNA metrics into the model, create logical rules, epistimology etc. App shows logical inconsistencies, logical fallacies etc. API key required. paste API key in "key icon" in app. 
 
 # DNA Metric Engine
 
